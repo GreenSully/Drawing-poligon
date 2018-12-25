@@ -1,6 +1,9 @@
 
 
 var NumVertici=Math.floor(Math.random()*27)+3;
+if(Math.floor(Math.random()*100)==0){
+	NumVertici=100;
+}
 var animate = /*window.requestAnimationFrame ||
 window.webkitRequestAnimationFrame ||
 window.mozRequestAnimationFrame ||*/
@@ -27,6 +30,14 @@ calcolaY();
 var index=0;
 var incremento=1;
 
+var currIter=0;
+var Maxiteration=0;
+
+var acc=0.1;
+var vel=1;
+
+var completo=false;
+
 var grd = ctx.createRadialGradient(width/2, height/2, lunghezza/3, width/2, height/2,lunghezza);
 grd.addColorStop(0, randomColor());
 grd.addColorStop(1,randomColor());
@@ -34,16 +45,37 @@ ctx.strokeStyle=grd;
 ctx.fillRect(0,0,width,height);
 ctx.lineWidth=2;
 var step = function(){
-	draw(index,incremento);
-	index++;
-	if(index>NumVertici){
-		index=0;
-		incremento++;
+	ctx.fillRect(0,0,width,height);
+	currIter=0;
+	while(currIter<Maxiteration){
+		
+	
+		draw(index,incremento);
+		index++;
+		if(index>NumVertici){
+			index=0;
+			incremento++;
+		}
+	
+		if(incremento>=NumVertici/2){
+			completo=true;
+			//return;
+		}
+		currIter++;
+	}
+	index=0;
+	incremento=1;
+	rad+=vel;
+	vel+=acc;
+	rad=rad%360;
+	vel=vel%720;
+	calcolaX();
+	calcolaY();
+	
+	if(!completo){
+		Maxiteration++;
 	}
 	
-	if(incremento>=NumVertici/2){
-		return;
-	}
 	animate(step);
 };
 
@@ -71,16 +103,11 @@ function calcolaY(){
 }
 
 function draw(index,incremento){
-	
-	
 		ctx.beginPath();
 		ctx.moveTo(Xcoord[index],Ycoord[index]);
 		index=(index+incremento)%NumVertici;
 		ctx.lineTo(Xcoord[index],Ycoord[index]);
 		ctx.stroke();
-	
-	
-	
 }
 
 function randomColor(){
